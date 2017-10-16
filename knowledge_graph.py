@@ -20,9 +20,9 @@ class KnowledgeGraph (object):
         return name
 
     def add_edge(self, left, right, name):
-        if not self.nodes.has_key(left):
+        if not left in self.nodes:
             logging.debug('Error: node %s not found', left)
-        if not self.nodes.has_key(right):
+        if not right in self.nodes:
             logging.debug('Error: node %s not found', right)
         self.edges['%s_%s_%s' % (left.name, name, right.name)] = Edge(grounded=True, name=name, left=left, right=right)
 
