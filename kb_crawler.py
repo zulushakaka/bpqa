@@ -85,3 +85,6 @@ if __name__ == '__main__':
     linker = WebQOracleLinker()
     topic_ent = linker.link(q)
     print(topic_ent)
+    kg = retrieve([topic_ent])
+    kg.show()
+    

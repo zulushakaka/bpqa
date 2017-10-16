@@ -44,6 +44,14 @@ class KnowledgeGraph (object):
                 del self.edges[key]
         del self.nodes[n2]
 
+    def __repr__(self):
+        return '<Knowledge graph with %d nodes and %d edges>' % (len(self.nodes), len(self.edges))
+
+    def show(self):
+        print(self)
+        for key, edge in self.edges.items():
+            print(key)
+
 
 class Node (object):
     def __init__(self, grounded, name):
