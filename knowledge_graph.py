@@ -24,6 +24,8 @@ class KnowledgeGraph (object):
             logging.debug('Error: node %s not found', left)
         if not right in self.nodes:
             logging.debug('Error: node %s not found', right)
+        left = self.nodes[left]
+        right = self.nodes[right]
         self.edges['%s_%s_%s' % (left.name, name, right.name)] = Edge(grounded=True, name=name, left=left, right=right)
 
     def merge_node(self, n1, n2):
