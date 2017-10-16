@@ -6,15 +6,7 @@ from entity_linker import WebQOracleLinker
 
 logger = logging.getLogger(__name__)
 
-sparql_backend = None
-
-
-def init_sparql_backend(back):
-    if not back:
-        back = backend.SPARQLHTTPBackend('202.120.38.146', '8699', '/sparql')
-
-
-init_sparql_backend(sparql_backend)
+sparql_backend = backend.SPARQLHTTPBackend('202.120.38.146', '8699', '/sparql')
 
 query_tmpl = Template(
 '''
@@ -87,4 +79,3 @@ if __name__ == '__main__':
     print(topic_ent)
     kg = retrieve([topic_ent])
     kg.show()
-    
