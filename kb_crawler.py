@@ -27,7 +27,7 @@ def crawl_two_hop(seed):
     results = sparql_backend.query(query)
     if not results:
         logger.debug('Error in SPARQL query:\n%s', query)
-    print(results)
+    # print(results)
     return results
 
 
