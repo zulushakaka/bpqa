@@ -284,14 +284,14 @@ def main():
      ?o fb:type.object.name ?x .
      FILTER (LANG(?x) = "en") }
     '''
-    print sparql.query(query)
+    print(sparql.query(query))
     query = '''
         SELECT ?name where {
         ?x <http://rdf.freebase.com/ns/type.object.name> ?name.
         FILTER (lang(?name) != "en")
         } LIMIT 100
     '''
-    print sparql.query(query)
+    print(sparql.query(query))
 
 
 if __name__ == '__main__':
