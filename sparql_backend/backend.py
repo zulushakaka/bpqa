@@ -222,10 +222,10 @@ class SPARQLHTTPBackend(object):
                     # Consume header.
                     fields = data.next()
                     results = [
-                        [normalize_output(c.decode('utf-8')) for c in resp]
+                        [normalize_output(c) for c in resp]
                         for resp in data]
                 else:
-                    results = [[normalize_output(c.decode('utf-8')) for c in
+                    results = [[normalize_output(c) for c in
                                 l.split('\t')]
                                for l in text.split('\n') if l][1:]
             else:
