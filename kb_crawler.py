@@ -6,7 +6,7 @@ from entity_linker import WebQOracleLinker
 
 logger = logging.getLogger(__name__)
 
-backend = None
+sparql_backend = None
 
 
 def init_sparql_backend(back):
@@ -14,7 +14,7 @@ def init_sparql_backend(back):
         back = backend.SPARQLHTTPBackend('202.120.38.146', '8699', '/sparql')
 
 
-init_sparql_backend(backend)
+init_sparql_backend(sparql_backend)
 
 query_tmpl = Template(
 '''
@@ -30,7 +30,7 @@ WHERE {
 
 def crawl_two_hop(seed):
     query = query_tmpl.substitute(e=seed)
-    results = backend.query(query)
+    results = sparql_backend.query(query)
     if not results:
         logger.debug('Error in SPARQL query:\n%s', query)
     return results
