@@ -14,8 +14,8 @@ class KnowledgeGraph (object):
             self.nodes[name] = Node(grounded=True, name=name)
             self.nodes[name].add_candidates([name])
         else:
-            var_name = 'var%d' % self.var_count
-            self.nodes[var_name] = Node(grounded=False, name=var_name)
+            name = 'var%d' % self.var_count
+            self.nodes[name] = Node(grounded=False, name=name)
             self.var_count += 1
         return name
 
