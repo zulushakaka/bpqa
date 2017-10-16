@@ -12,9 +12,11 @@ class KnowledgeGraph (object):
     def add_node(self, name=None):
         if name:
             self.nodes[name] = Node(grounde=True, name=name)
+            self.nodes[name].add_candidates([name])
         else:
             var_name = 'var%d' % self.var_count
             self.nodes[var_name] = Node(grounded=False, name=var_name)
+            self.var_count += 1
         return name
 
     def add_edge(self, left, right, name):
@@ -25,11 +27,22 @@ class KnowledgeGraph (object):
         self.edges['%s_%s_%s' % (left.name, name, right.name)] = Edge(grounded=True, name=name, left=left, right=right)
 
     def merge_node(self, n1, n2):
-        for edge in self.edges.values():
+        if self.nodes[n2].grounded:
+            if self.nodes[n1].grounded:
+                logger.debug('Error: merging two grounded nodes.')
+                return
+            n1, n2 = n2, n1
+        # replace n2 by n1 in all edges
+        for key, edge in self.edges.items():
             if set((edge.left.name, edge.right.name)) == set((n1, n2)):
-                del self.edges[str(edge)]
-            elif edge.left == n2:
-                edge.left.name
+                del self.edges[key]
+            elif edge.left.name == n2:
+                self.add_edge(n1, edge.right.name, edge.name)
+                del self.edges[key]
+            elif edge.right.name == n2:
+                self.add_edge(edge.left.name, n1, edge.name)
+                del self.edges[key]
+        del self.nodes[n2]
 
 
 class Node (object):
