@@ -10,7 +10,7 @@ from urllib3 import HTTPConnectionPool, Retry
 import logging
 # import globals
 import csv
-import StringIO
+from io import StringIO
 import json
 import time
 import traceback
