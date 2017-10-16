@@ -227,7 +227,7 @@ class SPARQLHTTPBackend(object):
                 else:
                     results = [[normalize_output(c) for c in
                                 l.split('\t')]
-                               for l in text.split('\n') if l][1:]
+                               for l in text.decode('utf-8').split('\n') if l][1:]
             else:
                 logger.warn("Return code %s for query '%s'" % (resp.status,
                                                                query))
