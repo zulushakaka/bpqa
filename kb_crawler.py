@@ -124,10 +124,10 @@ if __name__ == '__main__':
     eqs = kg.find_edge(None, None, '*equal*')
     eqvars = set()
     for eq in eqs:
-        print(eq)
+        # print(eq)
         left, _, right = eq.split('--')
         eqvars.add(left)
         eqvars.add(right)
-    # print(kg)
+    print(kg)
     print(len(eqvars))
     # kg.show()
