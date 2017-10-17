@@ -105,6 +105,7 @@ if __name__ == '__main__':
     eqs = kg.find_edge(None, None, '*equal*')
     vars = set()
     for eq in eqs:
+        print(eq)
         left, _, right = eq.split('--')
         vars.add(left)
         vars.add(right)
