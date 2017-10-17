@@ -128,6 +128,6 @@ if __name__ == '__main__':
         left, _, right = eq.split('--')
         eqvars.add(left)
         eqvars.add(right)
-    print(kg)
+    # print(kg)
     print(len(eqvars))
     # kg.show()
