@@ -75,13 +75,13 @@ class Node (object):
         self.grounded = grounded
         self.name = name
         self.candidates = set()
-        self.type = None
+        self.type = set()
 
     def add_candidates(self, cand):
         self.candidates.update(cand)
 
     def set_type(self, t):
-        self.type = t
+        self.type.add(t)
 
     def __repr__(self):
         return self.name
