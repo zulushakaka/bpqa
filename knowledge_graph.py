@@ -26,7 +26,14 @@ class KnowledgeGraph (object):
             logging.debug('Error: node %s not found', right)
         left = self.nodes[left]
         right = self.nodes[right]
-        self.edges['%s_%s_%s' % (left.name, name, right.name)] = Edge(grounded=True, name=name, left=left, right=right)
+        self.edges['%s--%s--%s' % (left.name, name, right.name)] = Edge(grounded=True, name=name, left=left, right=right)
+
+    def find_edge(self, left, right, name):
+        for key in self.edges:
+            key_left, key_name, key_right = key.split('--')
+            if key_name == name and not left or key_left == left and not right or key_right == right:
+                return key
+        return None
 
     def merge_node(self, n1, n2):
         if self.nodes[n2].grounded:
@@ -77,4 +84,4 @@ class Edge (object):
         self.candidates = set()
 
     def __repr__(self):
-        return '%s_%s_%s' % (self.left.name, self.name, self.right.name)
+        return '%s--%s--%s' % (self.left.name, self.name, self.right.name)
