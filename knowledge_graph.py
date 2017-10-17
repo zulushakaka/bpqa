@@ -58,7 +58,13 @@ class KnowledgeGraph (object):
 
     def show(self):
         print('####')
+        buffer = []
         for key, edge in self.edges.items():
+            if '*equal*' in key:
+                buffer.append(key)
+            else:
+                print(key)
+        for key in buffer:
             print(key)
         print(self)
 

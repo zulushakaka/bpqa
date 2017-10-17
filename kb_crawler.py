@@ -3,6 +3,7 @@ from string import Template
 import logging
 from knowledge_graph import KnowledgeGraph
 from entity_linker import WebQOracleLinker
+import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -80,14 +81,9 @@ def retrieve(seeds):
 
 def merge(kg):
     # add 'equal' between nodes with overlapping candidates, merge nodes with same candidates
-    for key, node in kg.items():
-        for key2, node2 in kg.items():
-            if key == key2:
-                continue
-            elif node.candidates == node2.candidates:
-                kg.merge_node(key, key2)
-            elif node.candidates & node2.candidates:
-                kg.add_edge(key, key2, '*equal*')
+    for n1, n2 in itertools.combinations(kg.nodes.keys(), 2):
+        if kg.nodes[n1].type == kg.nodes[n2].type:
+            kg.add_edge(n1, n2, '*equal*')
 
 
 def enhance(kg, literals):
@@ -105,4 +101,5 @@ if __name__ == '__main__':
     entities = linker.link(q)
     print(entities)
     kg = retrieve(entities)
+    merge(kg)
     kg.show()
