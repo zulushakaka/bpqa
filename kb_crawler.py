@@ -62,7 +62,7 @@ def retrieve(seeds):
             kg.nodes[x].set_type(path[1])
     for crawled_from_seed, seed in zip(crawled_two_hop, seeds):
         for path in crawled_from_seed:
-            predge = kg.find_edge(seed, None, path[0])
+            predge = kg.find_edge(seed, None, path[0])[0]
             if predge:
                 med = predge.split('--')[2]
                 x = kg.add_node()
@@ -103,12 +103,12 @@ if __name__ == '__main__':
     kg = retrieve(entities)
     merge(kg)
     eqs = kg.find_edge(None, None, '*equal*')
-    vars = set()
+    eqvars = set()
     for eq in eqs:
         print(eq)
         left, _, right = eq.split('--')
-        vars.add(left)
-        vars.add(right)
+        eqvars.add(left)
+        eqvars.add(right)
     print(kg)
-    print(len(vars))
+    print(len(eqvars))
     # kg.show()
