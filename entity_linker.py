@@ -15,8 +15,8 @@ class WebQOracleLinker (EntityLinker):
             for question in questions:
                 q = question['RawQuestion']
                 parse = question['Parses'][0]
-                topic_entity = parse['TopicEntityMid']
-                self.oracle[q] = topic_entity
+                sparql = parse['Sparql']
+                self.oracle[q] = list(map(lambda x: x[3:], set(filter(lambda x: x.startswith('ns:m.'), sparql.split()))))
 
     def link(self, q):
         return self.oracle[q]

@@ -58,6 +58,7 @@ def retrieve(seeds):
         for path in crawled_from_seed:
             x = kg.add_node()
             kg.add_edge(seed, x, path[0])
+            kg.nodes[x].set_type(path[1])
     for crawled_from_seed, seed in zip(crawled_two_hop, seeds):
         for path in crawled_from_seed:
             predge = kg.find_edge(seed, None, path[0])
@@ -65,11 +66,14 @@ def retrieve(seeds):
                 med = predge.split('--')[2]
                 x = kg.add_node()
                 kg.add_edge(med, x, path[1])
+                kg.nodes[x].set_type(path[3])
             else:
                 x1 = kg.add_node()
                 x2 = kg.add_node()
                 kg.add_edge(seed, x1, path[0])
                 kg.add_edge(x1, x2, path[1])
+                kg.nodes[x1].set_type(path[2])
+                kg.nodes[x2].set_type(path[3])
 
     return kg
 
@@ -96,9 +100,9 @@ def enhance(kg, literals):
 
 
 if __name__ == '__main__':
-    q = 'what is the name of justin bieber brother?'
+    q = 'what character did natalie portman play in star wars?'
     linker = WebQOracleLinker()
-    topic_ent = linker.link(q)
-    print(topic_ent)
-    kg = retrieve([topic_ent])
+    entities = linker.link(q)
+    print(entities)
+    kg = retrieve(entities)
     kg.show()

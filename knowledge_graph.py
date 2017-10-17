@@ -57,9 +57,10 @@ class KnowledgeGraph (object):
         return '<Knowledge graph with %d nodes and %d edges>' % (len(self.nodes), len(self.edges))
 
     def show(self):
-        print(self)
+        print('####')
         for key, edge in self.edges.items():
             print(key)
+        print(self)
 
 
 class Node (object):
@@ -67,9 +68,13 @@ class Node (object):
         self.grounded = grounded
         self.name = name
         self.candidates = set()
+        self.type = None
 
     def add_candidates(self, cand):
         self.candidates.update(cand)
+
+    def set_type(self, t):
+        self.type = t
 
     def __repr__(self):
         return self.name
