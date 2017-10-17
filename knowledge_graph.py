@@ -31,7 +31,7 @@ class KnowledgeGraph (object):
     def find_edge(self, left, right, name):
         for key in self.edges:
             key_left, key_name, key_right = key.split('--')
-            if key_name == name and not left or key_left == left and not right or key_right == right:
+            if key_name == name and (not left or key_left == left) and (not right or key_right == right):
                 return key
         return None
 
