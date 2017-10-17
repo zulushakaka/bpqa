@@ -60,8 +60,9 @@ def retrieve(seeds):
             kg.add_edge(seed, x, path[0])
     for crawled_from_seed, seed in zip(crawled_two_hop, seeds):
         for path in crawled_from_seed:
-            med = kg.find_edge(seed, None, path[0])
-            if med:
+            predge = kg.find_edge(seed, None, path[0])
+            if predge:
+                med = predge.split('--')[2]
                 x = kg.add_node()
                 kg.add_edge(med, x, path[1])
             else:
