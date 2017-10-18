@@ -43,7 +43,8 @@ class KnowledgeGraph (object):
                 return
             n1, n2 = n2, n1
         # replace n2 by n1 in all edges
-        for key, edge in self.edges.items():
+        for key in list(self.edges.keys()):
+            edge = self.edges.get(key)
             if set((edge.left.name, edge.right.name)) == set((n1, n2)):
                 del self.edges[key]
             elif edge.left.name == n2:
