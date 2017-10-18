@@ -72,9 +72,9 @@ def get_candidates(seed, path):
     lines = []
     for i in range(len(path)):
         if i == 0:
-            line = '%s %s ?x%d .' % (seed, path[i], i)
+            line = 'fb:%s fb:%s ?x%d .' % (seed, path[i], i)
         else:
-            line = '?x%d %s ?x%d .' % (i-1, path[i], i)
+            line = '?x%d fb:%s ?x%d .' % (i-1, path[i], i)
         lines.append(line)
     query = '''
 PREFIX fb: <http://rdf.freebase.com/ns/>
@@ -82,7 +82,7 @@ SELECT DISTINCT ?x%d
 WHERE {
 %s
 }
-''' % (len(path), '\n'.join(lines))
+''' % (len(path)-1, '\n'.join(lines))
     print(query)
     result = sparql_backend.query(query)
     if not result:
