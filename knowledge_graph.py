@@ -54,7 +54,7 @@ class KnowledgeGraph (object):
                 self.add_edge(edge.left.name, n1, edge.name)
                 del self.edges[key]
         del self.nodes[n2]
-        print('node %s merged into %s.' % (n2, n1))
+        # print('node %s merged into %s.' % (n2, n1))
 
     def __repr__(self):
         return '<Knowledge graph with %d nodes and %d edges>' % (len(self.nodes), len(self.edges))

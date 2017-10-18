@@ -162,4 +162,4 @@ if __name__ == '__main__':
         eqvars.add(right)
     print(kg)
     print(len(eqvars))
-    # kg.show()
+    kg.show()
