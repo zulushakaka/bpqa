@@ -130,6 +130,8 @@ def merge(kg):
     for n1, n2 in itertools.combinations(kg.nodes.keys(), 2):
         # if kg.nodes[n1].type == kg.nodes[n2].type:
             # kg.add_edge(n1, n2, '*equal*')
+            if n1 not in kg.nodes or n2 not in kg.nodes:
+                continue
             if kg.nodes[n1].candidates == kg.nodes[n2].candidates:
                 kg.merge_node(n1, n2)
             elif kg.nodes[n1].candidates & kg.nodes[n2].candidates:
