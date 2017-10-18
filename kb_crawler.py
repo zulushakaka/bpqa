@@ -37,7 +37,7 @@ def crawl_one_hop(seed):
     results = sparql_backend.query(query)
     if not results:
         logger.debug('Error in SPARQL query:\n%s', query)
-    print(results)
+    # print(results)
     return results
 
 
@@ -70,7 +70,7 @@ def get_type(mid):
 
 def get_candidates(seed, path):
     lines = []
-    for i in xrange(len(path)):
+    for i in range(len(path)):
         if i == 0:
             line = '%s %s ?x%d .' % (seed, path[i], i)
         else:
