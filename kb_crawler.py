@@ -81,9 +81,9 @@ PREFIX fb: <http://rdf.freebase.com/ns/>
 SELECT DISTINCT ?x%d 
 WHERE {
 %s
-}
+} LIMIT 100
 ''' % (len(path)-1, '\n'.join(lines))
-    print(query)
+    # print(query)
     result = sparql_backend.query(query)
     if not result:
         logger.info('Error in SPARQL query:\n%s', query)
@@ -128,11 +128,12 @@ def retrieve(seeds):
 def merge(kg):
     # add 'equal' between nodes with overlapping candidates, merge nodes with same candidates
     for n1, n2 in itertools.combinations(kg.nodes.keys(), 2):
-        if kg.nodes[n1].type == kg.nodes[n2].type:
+        # if kg.nodes[n1].type == kg.nodes[n2].type:
             # kg.add_edge(n1, n2, '*equal*')
-            if not kg.nodes[n1].candidates:
-                cands = get_candidates(kg, n1)
-                kg.nodes[n1].add_candidates(cands)
+            if kg.nodes[n1].candidates == kg.nodes[n2].candidates:
+                kg.merge_node(n1, n2)
+            elif kg.nodes[n1].candidates & kg.nodes[n2].candidates:
+                kg.add_edge(n1, n2, '*equal*')
 
 def enhance(kg, literals):
     # add numerical relations
