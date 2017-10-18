@@ -83,6 +83,7 @@ WHERE {
 %s
 }
 ''' % (len(path), '\n'.join(lines))
+    print query
     result = sparql_backend.query(query)
     if not result:
         logger.info('Error in SPARQL query:\n%s', query)
