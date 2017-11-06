@@ -3,8 +3,12 @@ import gensim
 
 def load_word_embedding():
     path = '/home/xianyang/bpqa/data/GoogleNews-vectors-negative300.bin'
+    print('Loading word2vec data ...')
     model = gensim.models.Word2Vec.load_word2vec_format(path, binary=True)
-    print(model.wv.most_similar(positive=['woman', 'king'], negative=['man']))
+    sentence = ["london", "is", "the", "capital", "of", "great", "britain"]
+    vectors = [model[w] for w in sentence]
+    # print(model.wv.most_similar(positive=['woman', 'king'], negative=['man']))
+    print(vectors)
 
 
 if __name__ == '__main__':
