@@ -9,6 +9,7 @@ LSTM_HIDDEN_SIZE = 100
 class HRBiLSTM (object):
     def __init__(self):
         word2idx, embedding_matrix = load_word_embedding()
+        print(word2idx)
         self.build_model(embedding_matrix)
 
     def build_model(self, embedding_matrix):
@@ -21,11 +22,11 @@ class HRBiLSTM (object):
 
         cell_q1_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
         cell_q1_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
-        q1_outputs, q1_states = tf.nn.bidirectional_dynamic_rnn(cell_q1_fw, cell_q1_bw, embedded)
+        q1_outputs, q1_states = tf.nn.bidirectional_dynamic_rnn(cell_q1_fw, cell_q1_bw, embedded, dtype=tf.float32)
 
         cell_q2_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
         cell_q2_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
-        q2_outputs, q2_states = tf.nn.bidirectional_dynamic_rnn(cell_q2_fw, cell_q2_bw, tf.concat(q1_outputs, 2))
+        q2_outputs, q2_states = tf.nn.bidirectional_dynamic_rnn(cell_q2_fw, cell_q2_bw, tf.concat(q1_outputs, 2), dtype=tf.float32)
 
         q_outputs = tf.add(q1_outputs, q2_outputs)
         q_pooling = tf.nn.max_pool(q_outputs)
