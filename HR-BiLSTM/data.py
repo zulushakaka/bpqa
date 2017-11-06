@@ -7,8 +7,8 @@ def load_word_embedding():
     model = gensim.models.Word2Vec.load_word2vec_format(path, binary=True)
     sentence = ["london", "is", "the", "capital", "great", "britain"]
     vectors = [model[w] for w in sentence]
-    # print(model.wv.most_similar(positive=['woman', 'king'], negative=['man']))
-    print(vectors)
+    print(model.most_similar(positive=['woman', 'king'], negative=['man']))
+    # print(vectors)
 
 
 if __name__ == '__main__':
