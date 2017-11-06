@@ -33,7 +33,7 @@ def get_webq_vocabulary():
     def helper(path, voc):
         with open(path, 'r') as f:
             webq = json.load(f)
-            for q in webq:
+            for q in webq['Questions']:
                 raw = q['RawQuestion']
                 words = raw[:-1].split()
                 for word in words:
