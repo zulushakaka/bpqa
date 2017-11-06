@@ -8,11 +8,15 @@ LSTM_HIDDEN_SIZE = 100
 
 class HRBiLSTM (object):
     def __init__(self):
+        word2idx, embedding_matrix = load_word_embedding()
+        self.build_model(embedding_matrix)
+
+    def build_model(self, embedding_matrix):
+        # question representation
         q_inputs = tf.placeholder(tf.int32, shape=(None))  # inputs are 1-dim integers
 
-        embedding = load_word_embedding()
-        embedding = tf.get_variable(name="embedding", shape=embedding.shape,
-                                         initializer=tf.constant_initializer(embedding), trainable=False)
+        embedding = tf.get_variable(name="embedding", shape=embedding_matrix.shape,
+                                         initializer=tf.constant_initializer(embedding_matrix), trainable=False)
         embedded = tf.nn.embedding_lookup(embedding, q_inputs)
 
         cell_q1_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
@@ -26,6 +30,7 @@ class HRBiLSTM (object):
         q_outputs = tf.add(q1_outputs, q2_outputs)
         q_pooling = tf.nn.max_pool(q_outputs)
 
+        # relation representation
         r_inputs_word = tf.placeholder(tf.int32, shape=(None))
         r_inputs_rels = tf.placeholder(tf.int32, shape=(None))
 
@@ -52,3 +57,7 @@ class HRBiLSTM (object):
 
     def predict(self):
         pass
+
+
+if __name__ == '__main__':
+    model = HRBiLSTM()

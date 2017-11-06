@@ -2,10 +2,18 @@ import gensim
 import json
 from collections import OrderedDict
 import h5py
+import pickle
+import os
 import numpy as np
 
 
 def load_word_embedding():
+    embedding_path = 'data/webq_word_embedding.dump'
+    if os.path.exists(embedding_path):
+        with open(embedding_path, 'r') as f:
+            word2idx, embedding = pickle.load(f)
+            return word2idx, embedding
+    print('Generating word embedding ...')
     vocabulary = get_webq_vocabulary()
     voc_size = len(vocabulary)
     print('vocabulary size: %d' % voc_size)
@@ -23,6 +31,9 @@ def load_word_embedding():
         if word in model:
             embedding[idx, :] = model[word]
         idx += 1
+
+    with open(embedding_path, 'w') as f:
+        pickle.dump((word2idx, embedding), f)
 
     return word2idx, embedding
 
@@ -42,6 +53,7 @@ def get_webq_vocabulary():
     helper('data/WebQSP/WebQSP.train.json', vocab)
     helper('data/WebQSP/WebQSP.test.json', vocab)
     return vocab
+
 
 if __name__ == '__main__':
     load_word_embedding()
