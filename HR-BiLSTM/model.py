@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from data import load_word_embedding
 
 
 LSTM_HIDDEN_SIZE = 100
@@ -9,7 +10,7 @@ class HRBiLSTM (object):
     def __init__(self):
         q_inputs = tf.placeholder(tf.int32, shape=(None))  # inputs are 1-dim integers
 
-        embedding = load_embedding()
+        embedding = load_word_embedding()
         embedding = tf.get_variable(name="embedding", shape=embedding.shape,
                                          initializer=tf.constant_initializer(embedding), trainable=False)
         embedded = tf.nn.embedding_lookup(embedding, q_inputs)
@@ -28,9 +29,9 @@ class HRBiLSTM (object):
         r_inputs_word = tf.placeholder(tf.int32, shape=(None))
         r_inputs_rels = tf.placeholder(tf.int32, shape=(None))
 
-        r_embedding = load_embedding()
+        r_embedding = load_word_embedding()
         r_embedding = tf.get_variable(name="r_embedding", shape=r_embedding.shape,
-                                         initializer=tf.random_normal(r_embedding), trainable=False)
+                                         initializer=tf.random_normal(r_embedding), trainable=True)
         # relation embeddings are randomly initialized
         r_word_embedded = tf.nn.embedding_lookup(embedding, r_inputs_word)
         r_rels_embedded = tf.nn.embedding_lookup(r_embedding, r_inputs_rels)
@@ -51,6 +52,3 @@ class HRBiLSTM (object):
 
     def predict(self):
         pass
-
-def load_embedding():
-    pass
