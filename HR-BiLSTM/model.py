@@ -9,7 +9,6 @@ LSTM_HIDDEN_SIZE = 100
 class HRBiLSTM (object):
     def __init__(self):
         word2idx, embedding_matrix = load_word_embedding()
-        print(word2idx)
         self.build_model(embedding_matrix)
 
     def build_model(self, embedding_matrix):
