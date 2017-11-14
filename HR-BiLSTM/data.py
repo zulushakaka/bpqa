@@ -1,7 +1,7 @@
 import gensim
 import json
 from collections import OrderedDict
-import h5py
+# import h5py
 import pickle
 import os
 import numpy as np
@@ -22,7 +22,7 @@ def load_word_embedding():
 
     path = 'data/GoogleNews-vectors-negative300.bin'
     print('Loading raw word2vec data ...')
-    model = gensim.models.KeyedVectors.load_word2vec_format(path, binary=True)
+    model = gensim.models.Word2Vec.load_word2vec_format(path, binary=True)
     print('Raw data loaded.')
 
     idx = 0
