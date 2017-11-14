@@ -28,15 +28,19 @@ class HRBiLSTM (object):
         embedded = tf.nn.embedding_lookup(embedding, q_inputs)
         # dimension: (batch_size, max_seq_len, embedding_dim)
 
-        cell_q1_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
-        cell_q1_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
+        with tf.variable_scope('fw1'):
+            cell_q1_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
+        with tf.variable_scope('bw1'):
+            cell_q1_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
         q1_outputs, _ = tf.nn.bidirectional_dynamic_rnn\
             (cell_fw=cell_q1_fw, cell_bw=cell_q1_bw, inputs=embedded, sequence_length=q_length, dtype=tf.float32)
         q1_outputs = tf.concat(q1_outputs, 2)
         # dimension: (batch_size, max_seq_len, cell_out_size * 2)
 
-        cell_q2_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
-        cell_q2_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
+        with tf.variable_scope('fw2'):
+            cell_q2_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
+        with tf.variable_scope('bw2'):
+            cell_q2_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
         q2_outputs, _ = tf.nn.bidirectional_dynamic_rnn\
             (cell_fw=cell_q2_fw, cell_bw=cell_q2_bw, inputs=q1_outputs, sequence_length=q_length, dtype=tf.float32)
         q2_outputs = tf.concat(q2_outputs, 2)
