@@ -101,6 +101,7 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
             for rel in infChain:
                 if not rel in rel2idx:
                     rel2idx[rel] = len(rel2idx) + 1
+                    idx2rel[len(rel2idx)] = rel
             infChain_rel = map(lambda x: rel2idx[x], infChain)
             # infChain_word = map(lambda x: word2idx[x], sum([rel.split('.') for rel in infChain], []))
             for rel in infChain_rel:
