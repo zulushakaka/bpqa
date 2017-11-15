@@ -61,8 +61,9 @@ class HRBiLSTM (object):
         # dimension: (batch_size, max_seq_len)
         r_inputs_rels_len = tf.placeholder(tf.int32, shape=[None])
 
-        r_embedding = tf.get_variable(name="r_embedding", shape=[len(self.rel2idx), REL_EMBEDDING_SIZE],
-                                      initializer=tf.random_normal(dtype=tf.float32), trainable=True)
+        rel_embedding_shape = [len(self.rel2idx), REL_EMBEDDING_SIZE]
+        r_embedding = tf.get_variable(name="r_embedding", shape=rel_embedding_shape,
+                    initializer=tf.random_normal(dtype=tf.float32, shape=rel_embedding_shape), trainable=True)
         # relation embeddings are randomly initialized
         # dimension: (rel_voc_size, rel_embedding_dim)
 
