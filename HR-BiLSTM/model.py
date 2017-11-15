@@ -63,7 +63,7 @@ class HRBiLSTM (object):
 
         rel_embedding_shape = [len(self.rel2idx), REL_EMBEDDING_SIZE]
         r_embedding = tf.get_variable(name="r_embedding", shape=rel_embedding_shape,
-                    initializer=tf.random_normal(dtype=tf.float32, shape=rel_embedding_shape), trainable=True)
+                    initializer=tf.random_normal_initializer(dtype=tf.float32), trainable=True)
         # relation embeddings are randomly initialized
         # dimension: (rel_voc_size, rel_embedding_dim)
 
@@ -85,12 +85,13 @@ class HRBiLSTM (object):
                  inputs=r_rels_embedded, sequence_length=r_inputs_rels_len, dtype=tf.float32)
             # dimension: (batch_size, max_seq_len, cell_out_size) * 2
 
-        r_outputs = tf.concat(tf.concat(r_word_outputs, 2), tf.concat(r_rels_outputs, 1))
+        r_outputs = tf.concat([tf.concat(r_word_outputs, 2), tf.concat(r_rels_outputs, 2)], axis=1)
         # dimension: (batch_size, max_seq_len_word + max_seq_len_rel, cell_out_size * 2)
-        r_pooling = tf.reduce_max(r_outputs, 1)
+        r_max_pool = tf.reduce_max(r_outputs, 1)
         # dimension: (batch_size, cell_out_size * 2)
 
-        score = tf.losses.cosine_distance(q_max_pool, r_pooling)
+        score = tf.reduce_sum(tf.multiply(tf.nn.l2_normalize(q_max_pool, dim=1),
+                                          tf.nn.l2_normalize(r_max_pool, dim=1)), axis=1)
 
     def train(self):
         pass
