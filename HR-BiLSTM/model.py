@@ -126,18 +126,21 @@ class HRBiLSTM (object):
             for _ in range(EPOCH):
                 # train
                 for eid in range(num_example):
+                    print ',',
                     sess.run(optimizer, feed_dict={self.q_inputs: q[eid], self.q_length: q_len[eid],
                                                    self.r_inputs_word: rw[eid], self.r_inputs_word_len: rw_len[eid],
                                                    self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
                 # show eval
                 correct = 0
-                for eid in range(num_example):
+                for i in range(num_example/100):
+                    eid = random.randint(0, num_example-1)
                     sim = sess.run([self.similarity],
                                    feed_dict={self.q_inputs: q[eid], self.q_length: q_len[eid],
                                               self.r_inputs_word: rw[eid], self.r_inputs_word_len: rw_len[eid],
                                               self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
                     if np.argmax(sim) == 0:
                         correct += 1
+                print '.'
                 print correct,'/',num_example, float(correct)/num_example
 
     def predict(self):
