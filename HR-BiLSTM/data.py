@@ -136,6 +136,7 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                     batch_wr_rel.append([neg] + [0 for i in range(max_r_r - 1)])
                     batch_wr_rel_len.append(1)
                     neg_words = map(lambda x: word2idx[x], idx2rel[neg].replace('_', '.').split('.'))
+                    print neg_words + [0 for i in range(max_r_w - len(neg_words))]
                     batch_wr_word.append(neg_words + [0 for i in range(max_r_w - len(neg_words))])
                     batch_wr_word_len.append(len(neg_words))
                 wq.append(batch_wq)
