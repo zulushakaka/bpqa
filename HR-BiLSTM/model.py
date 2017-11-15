@@ -10,12 +10,16 @@ MAX_RELATION_TYPE_LENGTH = 1
 REL_EMBEDDING_SIZE = 300
 MARGIN = 0.5
 BATCH_SIZE = 16
+LEARNING_RATE = 0.5
 
 
 class HRBiLSTM (object):
     def __init__(self):
         self.word2idx, embedding_matrix = load_word_embedding()
         self.rel2idx = get_fb_relations()
+
+        self.similarity, self.loss, self.q_inputs, self.q_length,\
+        self.r_inputs_word, self.r_inputs_word_len, self.r_inputs_rels, self.r_inputs_rels_len =\
         self.build_model(embedding_matrix)
 
     def build_model(self, embedding_matrix):
@@ -108,6 +112,33 @@ class HRBiLSTM (object):
             prepare_train_data(self.word2idx, self.rel2idx, MAX_QUESTION_LENGTH, MAX_RELATION_TYPE_LENGTH,
                                MAX_RELATION_WORD_LEGNTH, BATCH_SIZE)
         print q.shape, q_len.shape, rr.shape, rr_len.shape, rw.shape, rw_len.shape
+
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate=LEARNING_RATE).minimize(self.loss)
+
+        init = tf.global_variables_initializer()
+
+        with tf.Session() as sess:
+            sess.run(init)
+
+            EPOCH = 100
+            num_example = q.shape[0]
+
+            for _ in range(EPOCH):
+                # train
+                for eid in range(num_example):
+                    sess.run(optimizer, feed_dict={self.q_inputs: q[eid], self.q_length: q_len[eid],
+                                                   self.r_inputs_word: rw[eid], self.r_inputs_word_len: rw_len[eid],
+                                                   self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
+                # show eval
+                correct = 0
+                for eid in range(num_example):
+                    sim = sess.run([self.similarity],
+                                   feed_dict={self.q_inputs: q[eid], self.q_length: q_len[eid],
+                                              self.r_inputs_word: rw[eid], self.r_inputs_word_len: rw_len[eid],
+                                              self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
+                    if np.argmax(sim) == 0:
+                        correct += 1
+                print correct,'/',num_example, float(correct)/num_example
 
     def predict(self):
         pass
