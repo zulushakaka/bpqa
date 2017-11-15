@@ -19,7 +19,7 @@ def load_word_embedding():
     voc_size = len(vocabulary)
     print('vocabulary size: %d' % voc_size)
     word2idx = OrderedDict()
-    embedding = np.zeros(dtype=np.float32, shape=(voc_size, 300))
+    embedding = np.zeros(dtype=np.float32, shape=(10000, 300))
 
     path = 'data/GoogleNews-vectors-negative300.bin'
     print('Loading raw word2vec data ...')
@@ -33,8 +33,17 @@ def load_word_embedding():
             embedding[idx, :] = model[word]
         idx += 1
 
+    for rel in get_fb_relations():
+        rel_words = rel.replace('_', '.').split('.')
+        for word in rel_words:
+            if not word in word2idx:
+                word2idx[word] = idx
+                if word in model:
+                    embedding[idx, :] = model[word]
+                idx += 1
+
     with open(embedding_path, 'w') as f:
-        pickle.dump((word2idx, embedding), f)
+        pickle.dump((word2idx, embedding[:idx+1]), f)
 
     return word2idx, embedding
 
@@ -56,7 +65,7 @@ def get_webq_vocabulary():
     return vocab
 
 
-def get_webq_relations():
+def get_fb_relations():
     rel2idx = OrderedDict()
     cnt = 1
     with open('data/fb_relations.txt', 'r') as f:
@@ -98,9 +107,9 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                 batch_wr_word_len = []
                 batch_wq.append(words + [0 for i in range(max_q - len(words))])
                 batch_wq_len.append(len(words))
-                batch_wr_rel.append(rel + [0 for i in range(max_r_r - 1)])
+                batch_wr_rel.append([rel] + [0 for i in range(max_r_r - 1)])
                 batch_wr_rel_len.append(1)
-                infChain_word = map(lambda x: word2idx[x], rel.split('.'))
+                infChain_word = map(lambda x: word2idx[x], idx2rel[rel].replace('_', '.').split('.'))
                 batch_wr_word.append(infChain_word + [0 for i in range(max_r_w - len(infChain_word))])
                 batch_wr_word_len.append(len(infChain_word))
                 negative = []
@@ -112,9 +121,9 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
 
                     batch_wq.append(words + [0 for i in range(max_q - len(words))])
                     batch_wq_len.append(len(words))
-                    batch_wr_rel.append(neg + [0 for i in range(max_r_r - 1)])
+                    batch_wr_rel.append([neg] + [0 for i in range(max_r_r - 1)])
                     batch_wr_rel_len.append(1)
-                    neg_words = map(lambda x: word2idx[x], idx2rel[neg].split('.'))
+                    neg_words = map(lambda x: word2idx[x], idx2rel[neg].replace('_', '.').split('.'))
                     batch_wr_word.append(neg_words + [0 for i in range(max_r_w - len(neg_words))])
                     batch_wr_word_len.append(len(neg_words))
                 wq.append(batch_wq)

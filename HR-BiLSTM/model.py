@@ -5,8 +5,8 @@ from data import *
 
 LSTM_HIDDEN_SIZE = 100
 MAX_QUESTION_LENGTH = 30
-MAX_RELATION_WORD_LEGNTH = 10
-MAX_RELATION_TYPE_LENGTH = 5
+MAX_RELATION_WORD_LEGNTH = 5
+MAX_RELATION_TYPE_LENGTH = 1
 REL_EMBEDDING_SIZE = 300
 MARGIN = 0.5
 BATCH_SIZE = 16
@@ -15,7 +15,7 @@ BATCH_SIZE = 16
 class HRBiLSTM (object):
     def __init__(self):
         self.word2idx, embedding_matrix = load_word_embedding()
-        self.rel2idx = get_webq_relations()
+        self.rel2idx = get_fb_relations()
         self.build_model(embedding_matrix)
 
     def build_model(self, embedding_matrix):
