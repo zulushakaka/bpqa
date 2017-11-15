@@ -8,6 +8,8 @@ MAX_QUESTION_LENGTH = 30
 MAX_RELATION_WORD_LEGNTH = 10
 MAX_RELATION_TYPE_LENGTH = 5
 REL_EMBEDDING_SIZE = 300
+MARGIN = 0.5
+BATCH_SIZE = 16
 
 
 class HRBiLSTM (object):
@@ -90,11 +92,22 @@ class HRBiLSTM (object):
         r_max_pool = tf.reduce_max(r_outputs, 1)
         # dimension: (batch_size, cell_out_size * 2)
 
-        score = tf.reduce_sum(tf.multiply(tf.nn.l2_normalize(q_max_pool, dim=1),
+        similarity = tf.reduce_sum(tf.multiply(tf.nn.l2_normalize(q_max_pool, dim=1),
                                           tf.nn.l2_normalize(r_max_pool, dim=1)), axis=1)
+        # dimension: (batch_size)
+
+        # compute ranking loss
+        s_true = similarity[0]
+        s_max = tf.reduce_max(similarity[1:])
+        loss = tf.maximum(0.0, MARGIN - s_true + s_max)
+
+        return similarity, loss, q_inputs, q_length, r_inputs_word, r_inputs_word_len, r_inputs_rels, r_inputs_rels_len
 
     def train(self):
-        pass
+        q, q_len, rr, rr_len, rw, rw_len = \
+            prepare_train_data(self.word2idx, self.rel2idx, MAX_QUESTION_LENGTH, MAX_RELATION_TYPE_LENGTH,
+                               MAX_RELATION_WORD_LEGNTH, BATCH_SIZE)
+        print q.shape, q_len.shape, rr.shape, rr_len.shape, rw.shape, rw_len.shape
 
     def predict(self):
         pass
@@ -102,3 +115,4 @@ class HRBiLSTM (object):
 
 if __name__ == '__main__':
     model = HRBiLSTM()
+    model.train()

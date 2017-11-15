@@ -5,6 +5,7 @@ from collections import OrderedDict
 import pickle
 import os
 import numpy as np
+import random
 
 
 def load_word_embedding():
@@ -25,7 +26,7 @@ def load_word_embedding():
     model = gensim.models.Word2Vec.load_word2vec_format(path, binary=True)
     print('Raw data loaded.')
 
-    idx = 0
+    idx = 1
     for word in vocabulary:
         word2idx[word] = idx
         if word in model:
@@ -57,7 +58,7 @@ def get_webq_vocabulary():
 
 def get_webq_relations():
     rel2idx = OrderedDict()
-    cnt = 0
+    cnt = 1
     with open('data/fb_relations.txt', 'r') as f:
         for line in f:
             if line.startswith('http://rdf.freebase.com/ns/'):
@@ -65,6 +66,66 @@ def get_webq_relations():
                 cnt += 1
 
     return rel2idx
+
+
+def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
+    wq = []
+    wq_len = []
+    wr_rel = []
+    wr_rel_len = []
+    wr_word = []
+    wr_word_len = []
+
+    idx2rel = {}
+    for k, v in rel2idx.items():
+        idx2rel[v] = k
+
+    with open('data/WebQSP/WebQSP.train.json', 'r') as f:
+        webq = json.load(f)
+        for q in webq['Questions']:
+            raw = q['RawQuestion']
+            words = map(lambda x: word2idx[x], raw[:-1].split())
+            # sparql = q['Parses'][0]['Sparql']
+            infChain = q['Parses'][0]['InferentialChain']
+            infChain_rel = map(lambda x: rel2idx[x], infChain)
+            # infChain_word = map(lambda x: word2idx[x], sum([rel.split('.') for rel in infChain], []))
+            for rel in infChain_rel:
+                batch_wq = []
+                batch_wq_len = []
+                batch_wr_rel = []
+                batch_wr_rel_len = []
+                batch_wr_word = []
+                batch_wr_word_len = []
+                batch_wq.append(words + [0 for i in range(max_q - len(words))])
+                batch_wq_len.append(len(words))
+                batch_wr_rel.append(rel + [0 for i in range(max_r_r - 1)])
+                batch_wr_rel_len.append(1)
+                infChain_word = map(lambda x: word2idx[x], rel.split('.'))
+                batch_wr_word.append(infChain_word + [0 for i in range(max_r_w - len(infChain_word))])
+                batch_wr_word_len.append(len(infChain_word))
+                negative = []
+                for _ in range(batch - 1):
+                    neg = random.randint() % len(rel2idx) + 1
+                    while neg == rel or neg in negative:
+                        neg = random.randint() % len(rel2idx) + 1
+                    negative.append(neg)
+
+                    batch_wq.append(words + [0 for i in range(max_q - len(words))])
+                    batch_wq_len.append(len(words))
+                    batch_wr_rel.append(neg + [0 for i in range(max_r_r - 1)])
+                    batch_wr_rel_len.append(1)
+                    neg_words = map(lambda x: word2idx[x], idx2rel[neg].split('.'))
+                    batch_wr_word.append(neg_words + [0 for i in range(max_r_w - len(neg_words))])
+                    batch_wr_word_len.append(len(neg_words))
+                wq.append(batch_wq)
+                wq_len.append(batch_wq_len)
+                wr_rel.append(batch_wr_rel)
+                wr_rel_len.append(batch_wr_rel_len)
+                wr_word.append(batch_wr_word)
+                wr_word_len.append(batch_wr_word_len)
+
+    return np.asarray(wq), np.asarray(wq_len), np.asarray(wr_rel), \
+           np.asarray(wr_rel_len), np.asarray(wr_word), np.asarray(wr_word_len)
 
 if __name__ == '__main__':
     load_word_embedding()
