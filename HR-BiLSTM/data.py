@@ -118,7 +118,7 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                 for _ in range(batch - 1):
                     neg = random.randint(1, len(rel2idx))
                     while neg == rel or neg in negative:
-                        neg = random.randint() % len(rel2idx) + 1
+                        neg = random.randint(1, len(rel2idx))
                     negative.append(neg)
 
                     batch_wq.append(words + [0 for i in range(max_q - len(words))])
