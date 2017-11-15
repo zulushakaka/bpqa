@@ -96,6 +96,8 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
             words = map(lambda x: word2idx[x], raw[:-1].split())
             # sparql = q['Parses'][0]['Sparql']
             infChain = q['Parses'][0]['InferentialChain']
+            if infChain == None:
+                continue
             infChain_rel = map(lambda x: rel2idx[x], infChain)
             # infChain_word = map(lambda x: word2idx[x], sum([rel.split('.') for rel in infChain], []))
             for rel in infChain_rel:
