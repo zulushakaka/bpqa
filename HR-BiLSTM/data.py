@@ -55,5 +55,16 @@ def get_webq_vocabulary():
     return vocab
 
 
+def get_webq_relations():
+    rel2idx = OrderedDict()
+    cnt = 0
+    with open('data/fb_relations.txt', 'r') as f:
+        for line in f:
+            if line.startswith('http://rdf.freebase.com/ns/'):
+                rel2idx[line[27:-1]] = cnt
+                cnt += 1
+
+    return rel2idx
+
 if __name__ == '__main__':
     load_word_embedding()

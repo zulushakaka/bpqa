@@ -1,17 +1,19 @@
 import tensorflow as tf
 import numpy as np
-from data import load_word_embedding
+from data import *
 
 
 LSTM_HIDDEN_SIZE = 100
 MAX_QUESTION_LENGTH = 30
 MAX_RELATION_WORD_LEGNTH = 10
 MAX_RELATION_TYPE_LENGTH = 5
+REL_EMBEDDING_SIZE = 300
 
 
 class HRBiLSTM (object):
     def __init__(self):
-        word2idx, embedding_matrix = load_word_embedding()
+        self.word2idx, embedding_matrix = load_word_embedding()
+        self.rel2idx = get_webq_relations()
         self.build_model(embedding_matrix)
 
     def build_model(self, embedding_matrix):
@@ -20,7 +22,7 @@ class HRBiLSTM (object):
         q_inputs = tf.placeholder(dtype=tf.int32, shape=[None, MAX_QUESTION_LENGTH])
         # dimension: (batch_size, max_seq_len)
         q_length = tf.placeholder(dtype=tf.int32, shape=[None])
-        # dimension: (batcj_size)
+        # dimension: (batch_size)
 
         embedding = tf.get_variable(name="embedding", shape=embedding_matrix.shape,
                                          initializer=tf.constant_initializer(embedding_matrix), trainable=False)
@@ -54,23 +56,38 @@ class HRBiLSTM (object):
 
         r_inputs_word = tf.placeholder(tf.int32, shape=[None, MAX_RELATION_WORD_LEGNTH])
         # dimension: (batch_size, max_seq_len)
+        r_inputs_word_len = tf.placeholder(tf.int32, shape=[None])
         r_inputs_rels = tf.placeholder(tf.int32, shape=[None, MAX_RELATION_TYPE_LENGTH])
+        # dimension: (batch_size, max_seq_len)
+        r_inputs_rels_len = tf.placeholder(tf.int32, shape=[None])
 
-        r_embedding = load_word_embedding()
-        r_embedding = tf.get_variable(name="r_embedding", shape=r_embedding.shape,
-                                         initializer=tf.random_normal(r_embedding), trainable=True)
+        r_embedding = tf.get_variable(name="r_embedding", shape=[len(self.rel2idx), REL_EMBEDDING_SIZE],
+                                      initializer=tf.random_normal(dtype=tf.float32), trainable=True)
         # relation embeddings are randomly initialized
+        # dimension: (rel_voc_size, rel_embedding_dim)
+
         r_word_embedded = tf.nn.embedding_lookup(embedding, r_inputs_word)
+        # dimension: (batch_size, max_seq_len, embedding_dim)
         r_rels_embedded = tf.nn.embedding_lookup(r_embedding, r_inputs_rels)
+        # dimension: (batch_size, max_seq_len, rel_embedding_dim)
 
-        cell_r_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
-        cell_r_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
+        with tf.variable_scope('rel') as scope:
+            cell_r_fw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
+            cell_r_bw = tf.nn.rnn_cell.BasicLSTMCell(LSTM_HIDDEN_SIZE)
 
-        r_word_outputs, r_word_states = tf.nn.bidirectional_dynamic_rnn(cell_r_fw, cell_r_bw, r_word_embedded)
-        r_rels_outputs, r_rels_states = tf.nn.bidirectional_dynamic_rnn(cell_r_fw, cell_r_bw, r_rels_embedded)
+            r_word_outputs, _ = tf.nn.bidirectional_dynamic_rnn\
+                (cell_fw=cell_r_fw, cell_bw=cell_r_bw,
+                 inputs=r_word_embedded, sequence_length=r_inputs_word_len, dtype=tf.float32)
+            # dimension: (batch_size, max_seq_len, cell_out_size) * 2
+            r_rels_outputs, _ = tf.nn.bidirectional_dynamic_rnn\
+                (cell_fw=cell_r_fw, cell_bw=cell_r_bw,
+                 inputs=r_rels_embedded, sequence_length=r_inputs_rels_len, dtype=tf.float32)
+            # dimension: (batch_size, max_seq_len, cell_out_size) * 2
 
-        r_outputs = tf.concat(tf.concat(r_word_outputs, 2), tf.concat(r_rels_outputs, 2))
-        r_pooling = tf.nn.max_pool(r_outputs)
+        r_outputs = tf.concat(tf.concat(r_word_outputs, 2), tf.concat(r_rels_outputs, 1))
+        # dimension: (batch_size, max_seq_len_word + max_seq_len_rel, cell_out_size * 2)
+        r_pooling = tf.reduce_max(r_outputs, 1)
+        # dimension: (batch_size, cell_out_size * 2)
 
         score = tf.losses.cosine_distance(q_max_pool, r_pooling)
 
