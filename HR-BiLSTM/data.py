@@ -144,7 +144,7 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                 wr_rel_len.append(batch_wr_rel_len)
                 wr_word.append(batch_wr_word)
                 wr_word_len.append(batch_wr_word_len)
-
+    print np.asarray(wr_word).shape
     return np.asarray(wq), np.asarray(wq_len), np.asarray(wr_rel), \
            np.asarray(wr_rel_len), np.asarray(wr_word), np.asarray(wr_word_len)
 
