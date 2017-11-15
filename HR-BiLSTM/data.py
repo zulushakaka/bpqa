@@ -98,6 +98,8 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
             infChain = q['Parses'][0]['InferentialChain']
             if infChain == None:
                 continue
+            if not infChain in rel2idx:
+                rel2idx[infChain] = len(rel2idx) + 1
             infChain_rel = map(lambda x: rel2idx[x], infChain)
             # infChain_word = map(lambda x: word2idx[x], sum([rel.split('.') for rel in infChain], []))
             for rel in infChain_rel:
