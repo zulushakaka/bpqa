@@ -59,6 +59,11 @@ def get_webq_vocabulary():
                 words = raw[:-1].split()
                 for word in words:
                     voc.add(word)
+                inf_chain = q['Parses'][0]['InferentialChain']
+                for rel in inf_chain:
+                    rel_words = rel.replace('_', '.').split('.')
+                    for word in rel_words:
+                        voc.add(word)
 
     helper('data/WebQSP/WebQSP.train.json', vocab)
     helper('data/WebQSP/WebQSP.test.json', vocab)
