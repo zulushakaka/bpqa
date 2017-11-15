@@ -146,14 +146,15 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                 # print batch_wr_word
                 wr_word.append(batch_wr_word)
                 wr_word_len.append(batch_wr_word_len)
+
     a = np.zeros(shape=(len(wr_word), batch, max_r_w), dtype=np.int32)
     for i in range(len(wr_word)):
         for j in range(batch):
             for k in range(max_r_w):
                 a[i, j, k] = wr_word[i][j][k]
-    print a.shape
+    # print a.shape
     return np.asarray(wq), np.asarray(wq_len), np.asarray(wr_rel), \
-           np.asarray(wr_rel_len), np.asarray(wr_word), np.asarray(wr_word_len)
+           np.asarray(wr_rel_len), a, np.asarray(wr_word_len)
 
 if __name__ == '__main__':
     load_word_embedding()
