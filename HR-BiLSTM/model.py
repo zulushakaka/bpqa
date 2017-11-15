@@ -120,13 +120,13 @@ class HRBiLSTM (object):
         with tf.Session() as sess:
             sess.run(init)
 
-            EPOCH = 100
+            EPOCH = 10
             num_example = q.shape[0]
 
             for _ in range(EPOCH):
                 # train
                 for eid in range(num_example):
-                    print ',',
+                    # print ',',
                     sess.run(optimizer, feed_dict={self.q_inputs: q[eid], self.q_length: q_len[eid],
                                                    self.r_inputs_word: rw[eid], self.r_inputs_word_len: rw_len[eid],
                                                    self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
@@ -140,8 +140,19 @@ class HRBiLSTM (object):
                                               self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
                     if np.argmax(sim) == 0:
                         correct += 1
-                print '.'
-                print correct,'/',num_example, float(correct)/num_example
+                # print '.'
+                print correct,'/',num_example/100, float(correct)/num_example*100
+
+            for i in range(num_example):
+                eid = random.randint(0, num_example - 1)
+                sim = sess.run([self.similarity],
+                               feed_dict={self.q_inputs: q[eid], self.q_length: q_len[eid],
+                                          self.r_inputs_word: rw[eid], self.r_inputs_word_len: rw_len[eid],
+                                          self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
+                if np.argmax(sim) == 0:
+                    correct += 1
+            print '.'
+            print correct, '/', num_example, float(correct) / num_example
 
     def predict(self):
         pass
