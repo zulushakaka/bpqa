@@ -117,6 +117,8 @@ class HRBiLSTM (object):
 
         init = tf.global_variables_initializer()
 
+        saver = tf.train.Saver()
+
         with tf.Session() as sess:
             sess.run(init)
 
@@ -155,8 +157,11 @@ class HRBiLSTM (object):
             print '.'
             print correct, '/', num_example, float(correct) / num_example
 
-    def predict(self):
+            saver.save(sess, 'HR-BiLSTM/model.ckpt')
+
+    def predict(self, q, r):
         pass
+
 
 
 if __name__ == '__main__':

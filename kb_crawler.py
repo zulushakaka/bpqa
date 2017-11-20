@@ -137,6 +137,7 @@ def merge(kg):
             elif kg.nodes[n1].candidates & kg.nodes[n2].candidates:
                 kg.add_edge(n1, n2, '*equal*')
 
+
 def enhance(kg, literals):
     # add numerical relations
     for literal in literals:
