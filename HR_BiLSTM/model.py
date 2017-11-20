@@ -21,6 +21,7 @@ class HRBiLSTM (object):
         self.similarity, self.loss, self.q_inputs, self.q_length,\
         self.r_inputs_word, self.r_inputs_word_len, self.r_inputs_rels, self.r_inputs_rels_len =\
         self.build_model(embedding_matrix)
+        self.sess = None
 
     def build_model(self, embedding_matrix):
         # question representation
@@ -107,7 +108,7 @@ class HRBiLSTM (object):
 
         return similarity, loss, q_inputs, q_length, r_inputs_word, r_inputs_word_len, r_inputs_rels, r_inputs_rels_len
 
-    def train(self):
+    def train(self, epoch, prev=None):
         q, q_len, rr, rr_len, rw, rw_len = \
             prepare_train_data(self.word2idx, self.rel2idx, MAX_QUESTION_LENGTH, MAX_RELATION_TYPE_LENGTH,
                                MAX_RELATION_WORD_LEGNTH, BATCH_SIZE)
@@ -121,14 +122,18 @@ class HRBiLSTM (object):
 
         with tf.Session() as sess:
             sess.run(init)
-
-            EPOCH = 6
             num_example = q.shape[0]
 
-            for _ in range(EPOCH):
+            if prev:
+                load_path = saver.restore(sess, prev)
+                print('Model restored from file: %s' % load_path)
+                prev_epoch = int(prev[prev.find('-') + 1, prev.find('.')])
+            else:
+                prev_epoch = 0
+
+            for _ in range(epoch):
                 # train
                 for eid in range(num_example):
-                    # print ',',
                     sess.run(optimizer, feed_dict={self.q_inputs: q[eid], self.q_length: q_len[eid],
                                                    self.r_inputs_word: rw[eid], self.r_inputs_word_len: rw_len[eid],
                                                    self.r_inputs_rels: rr[eid], self.r_inputs_rels_len: rr_len[eid]})
@@ -157,13 +162,47 @@ class HRBiLSTM (object):
             print '.'
             print correct, '/', num_example, float(correct) / num_example
 
-            saver.save(sess, 'HR-BiLSTM/model.ckpt')
+            saver.save(sess, 'HR_BiLSTM/model-%d.ckpt' % prev_epoch + epoch)
 
     def predict(self, q, r):
-        pass
+        '''
+        :param q: question, string
+        :param r: relation, string
+        :return: [0,1]
+        '''
+        if not self.sess:
+            print('Load or train a model first.')
+            return -1
 
+        q = [self.word2idx[w] for w in q.split()]
+        q_len = np.asarray([len(q)])
+        q = np.asarray(q + [0 for i in range(MAX_QUESTION_LENGTH - q_len[0])])
+        r_word = [self.word2idx[w] for w in r.replace('_', '.').split('.')]
+        r_word_len = np.asarray([len(r_word)])
+        r_word = np.asarray(r_word + [0 for i in range(MAX_RELATION_WORD_LEGNTH - r_word_len[0])])
+        r_rel = [self.rel2idx[r]]
+        r_rel_len = np.asarray([len(r_rel)])
+        r_rel = np.asarray(r_rel + [0 for i in range(MAX_RELATION_TYPE_LENGTH - r_rel_len[0])])
+
+        sim = self.sess.run([self.similarity],
+                       feed_dict={self.q_inputs: q, self.q_length: q_len,
+                                  self.r_inputs_word: r_word, self.r_inputs_word_len: r_word_len,
+                                  self.r_inputs_rels: r_rel, self.r_inputs_rels_len: r_rel_len})
+
+        return sim[0]
+
+    def load_model(self, path):
+        if self.sess:
+            self.sess.close()
+        self.sess = tf.Session()
+        self.sess.run(tf.global_variables_initializer())
+
+        saver = tf.train.Saver()
+        saver.restore(self.sess, path)
 
 
 if __name__ == '__main__':
     model = HRBiLSTM()
-    model.train()
+    model.train(6)
+
+
