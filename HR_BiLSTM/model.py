@@ -176,13 +176,13 @@ class HRBiLSTM (object):
             return -1
 
         q = [self.word2idx[w] for w in q.split()]
-        q_len = np.asarray([len(q)]).reshape((1, 1))
+        q_len = np.asarray([len(q)]).reshape((1,))
         q = np.asarray(q + [0 for i in range(MAX_QUESTION_LENGTH - q_len[0])]).reshape((1, MAX_QUESTION_LENGTH))
         r_word = [self.word2idx[w] for w in r.replace('_', '.').split('.')]
-        r_word_len = np.asarray([len(r_word)]).reshape((1, 1))
+        r_word_len = np.asarray([len(r_word)]).reshape((1,))
         r_word = np.asarray(r_word + [0 for i in range(MAX_RELATION_WORD_LEGNTH - r_word_len[0])]).reshape((1, MAX_RELATION_WORD_LEGNTH))
         r_rel = [self.rel2idx[r]]
-        r_rel_len = np.asarray([len(r_rel)]).reshape((1, 1))
+        r_rel_len = np.asarray([len(r_rel)]).reshape((1,))
         r_rel = np.asarray(r_rel + [0 for i in range(MAX_RELATION_TYPE_LENGTH - r_rel_len[0])]).reshape((1, MAX_RELATION_TYPE_LENGTH))
 
         sim = self.sess.run([self.similarity],
