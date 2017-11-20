@@ -127,7 +127,7 @@ class HRBiLSTM (object):
             if prev:
                 load_path = saver.restore(sess, prev)
                 print('Model restored from file: %s' % load_path)
-                prev_epoch = int(prev[prev.find('-') + 1, prev.find('.')])
+                prev_epoch = int(prev[prev.find('-') + 1: prev.find('.')])
             else:
                 prev_epoch = 0
 
