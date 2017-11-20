@@ -12,11 +12,10 @@ if __name__ == '__main__':
     # eval on test
     with open('data/WebQSP/WebQSP.test.json') as f:
         test = json.load(f)
-
         correct = 0
         count = 0
 
-        for q in test:
+        for q in test['Questions']:
             topic_entity = q['Parses'][0]['TopicEntityMid']
             inf_chain = q['Parses'][0]['InferentialChain']
 
