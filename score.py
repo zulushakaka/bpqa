@@ -6,7 +6,7 @@ import numpy as np
 
 if __name__ == '__main__':
     model = HRBiLSTM()
-    model.train(2, 'HR-BiLSTM/model.ckpt')
+    model.train(2, 'HR_BiLSTM/model.ckpt')
 
     # eval on test
     with open('data/WebQSP/WebQSP.test.json') as f:
