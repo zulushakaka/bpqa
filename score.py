@@ -19,7 +19,7 @@ if __name__ == '__main__':
             topic_entity = q['Parses'][0]['TopicEntityMid']
             inf_chain = q['Parses'][0]['InferentialChain']
 
-            if not inf_chain:
+            if not inf_chain or not topic_entity:
                 continue
 
             candidates = set()
