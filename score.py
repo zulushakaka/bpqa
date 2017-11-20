@@ -17,8 +17,8 @@ if __name__ == '__main__':
         count = 0
 
         for q in test:
-            topic_entity = q['Parses']['TopicEntityMid']
-            inf_chain = q['Parses']['InferentialChain']
+            topic_entity = q['Parses'][0]['TopicEntityMid']
+            inf_chain = q['Parses'][0]['InferentialChain']
 
             candidates = set()
             cands = crawl_two_hop(topic_entity)
