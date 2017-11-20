@@ -125,8 +125,8 @@ class HRBiLSTM (object):
             num_example = q.shape[0]
 
             if prev:
-                load_path = saver.restore(sess, prev)
-                print('Model restored from file: %s' % load_path)
+                saver.restore(sess, prev)
+                # print('Model restored from file: %s' % load_path)
                 prev_epoch = int(prev[prev.find('-') + 1: prev.find('.')])
             else:
                 prev_epoch = 0
@@ -162,7 +162,8 @@ class HRBiLSTM (object):
             print '.'
             print correct, '/', num_example, float(correct) / num_example
 
-            saver.save(sess, 'HR_BiLSTM/model-%d.ckpt' % prev_epoch + epoch)
+            saver.save(sess, 'HR_BiLSTM/model-%d.ckpt' % (prev_epoch + epoch))
+            self.sess = sess
 
     def predict(self, q, r):
         '''
