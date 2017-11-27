@@ -39,7 +39,7 @@ if __name__ == '__main__':
             cands = crawl_one_hop(topic_entity)
             for path in cands:
                 candidates.add(path[0])
-                candidates.add(path[1])
+                # candidates.add(path[1])
             candidates = list(candidates)
 
             best_score = 0
