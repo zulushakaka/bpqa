@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
         q_count = 0
         for q in test['Questions']:
-            print(q_count,)
+            print q_count,
             q_count += 1
             topic_entity = q['Parses'][0]['TopicEntityMid']
             inf_chain = q['Parses'][0]['InferentialChain']
@@ -54,7 +54,8 @@ if __name__ == '__main__':
             best_score = 0
             best_cand = None
             for cand in candidates:
-                # print('!')
+                if not cand in model.rel2idx:
+                    continue
                 score = model.predict(q['RawQuestion'][:-1], cand)
                 if score > best_score:
                     best_score = score
