@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
         q_count = 0
         for q in test['Questions']:
-            print(q_count)
+            print(q_count,)
             q_count += 1
             topic_entity = q['Parses'][0]['TopicEntityMid']
             inf_chain = q['Parses'][0]['InferentialChain']
@@ -45,6 +45,12 @@ if __name__ == '__main__':
                 # candidates.add(path[1])
             candidates = list(candidates)
 
+            if len(candidates) > 32:
+                candidates = candidates[:32]
+            for gold in inf_chain:
+                if not gold in candidates:
+                    candidates.append(gold)
+
             best_score = 0
             best_cand = None
             for cand in candidates:
@@ -55,6 +61,9 @@ if __name__ == '__main__':
                     best_cand = cand
             if best_cand in inf_chain:
                 correct += 1
+                print('t')
+            else:
+                print('f')
             count += 1
 
         print(correct,'/',count, float(correct)/count)
