@@ -1,4 +1,4 @@
-from sparql_backend import backend
+from sparql import *
 from string import Template
 import logging
 from knowledge_graph import KnowledgeGraph
@@ -6,8 +6,6 @@ from entity_linker import WebQOracleLinker
 import itertools
 
 logger = logging.getLogger(__name__)
-
-sparql_backend = backend.SPARQLHTTPBackend('202.120.38.146', '8699', '/sparql')
 
 query_tmpl1 = Template('''
 PREFIX fb: <http://rdf.freebase.com/ns/>

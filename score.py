@@ -1,7 +1,20 @@
 from HR_BiLSTM.model import HRBiLSTM
 import json
-from kb_crawler import crawl_one_hop
+from string import Template
 import numpy as np
+from sparql import *
+
+def crawl_one_hop(seed):
+    query = Template('''
+    PREFIX fb: <http://rdf.freebase.com/ns/>
+    SELECT DISTINCT ?p
+    WHERE {
+        fb:${e} ?p ?x .
+        FILTER (fb:${e} != ?x)
+    }
+    ''').substitute(e=seed)
+    result = sparql_backend.query(query)
+    return result
 
 
 if __name__ == '__main__':
