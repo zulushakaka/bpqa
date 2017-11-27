@@ -1,6 +1,6 @@
 from HR_BiLSTM.model import HRBiLSTM
 import json
-from kb_crawler import crawl_two_hop
+from kb_crawler import crawl_one_hop
 import numpy as np
 
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
                 continue
 
             candidates = set()
-            cands = crawl_two_hop(topic_entity)
+            cands = crawl_one_hop(topic_entity)
             for path in cands:
                 candidates.add(path[0])
                 candidates.add(path[1])
@@ -32,6 +32,7 @@ if __name__ == '__main__':
             best_score = 0
             best_cand = None
             for cand in candidates:
+                print('!')
                 score = model.predict(q['RawQuestion'][:-1], cand)
                 if score > best_score:
                     best_score = score
