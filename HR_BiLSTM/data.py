@@ -7,12 +7,11 @@ import os
 import numpy as np
 import random
 
-# import os, sys, inspect
-# currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-# parentdir = os.path.dirname(currentdir)
-# sys.path.insert(0, parentdir)
+import os, sys, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 from kb_crawler import crawl_one_hop
-# from ..kb_crawler import crawl_one_hop
 
 
 def load_word_embedding():
@@ -165,6 +164,7 @@ def prepare_train_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
 
 
 def prepare_training_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
+    print('preparing training data...')
     wq = []  # question
     wq_len = []  # question length
     wr_rel = []  # relation as type
@@ -180,6 +180,7 @@ def prepare_training_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
         webq = json.load(f)
         for q in webq['Questions']:
             raw = q['RawQuestion']
+            print(raw)
             words = map(lambda x: word2idx[x], raw[:-1].split())
             inf_chain = q['Parses'][0]['InferentialChain']
             topic_ent = q['Parses'][0]['TopicEntityMid']
@@ -212,7 +213,7 @@ def prepare_training_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                 batch_wr_word.append(infChain_word + [0 for i in range(max_r_w - len(infChain_word))])
                 batch_wr_word_len.append(len(infChain_word))
                 negative = []
-                for _ in range(min(batch - 1, len(cand_rels))):
+                for _ in range(batch - 1):
                     neg = random.choice(cand_rels)
                     while neg == rel or neg in negative:
                         neg = random.choice(cand_rels)
@@ -234,14 +235,8 @@ def prepare_training_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                 wr_word.append(batch_wr_word)
                 wr_word_len.append(batch_wr_word_len)
 
-    a = np.zeros(shape=(len(wr_word), batch, max_r_w), dtype=np.int32)
-    for i in range(len(wr_word)):
-        for j in range(batch):
-            for k in range(max_r_w):
-                a[i, j, k] = wr_word[i][j][k]
-
     return np.asarray(wq), np.asarray(wq_len), np.asarray(wr_rel), \
-           np.asarray(wr_rel_len), a, np.asarray(wr_word_len)
+           np.asarray(wr_rel_len), np.asarray(wr_word), np.asarray(wr_word_len)
 
 
 if __name__ == '__main__':
