@@ -6,7 +6,13 @@ import pickle
 import os
 import numpy as np
 import random
-from ..kb_crawler import crawl_one_hop
+
+import os, sys, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+from kb_crawler import crawl_one_hop
+# from ..kb_crawler import crawl_one_hop
 
 
 def load_word_embedding():
