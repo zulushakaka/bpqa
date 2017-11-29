@@ -4,6 +4,7 @@ from string import Template
 import numpy as np
 from sparql import *
 
+
 def crawl_one_hop(seed):
     query = Template('''
     PREFIX fb: <http://rdf.freebase.com/ns/>

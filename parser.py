@@ -11,16 +11,17 @@ class Parser:
         entities = self.linker.link(q)
         kg = retrieve(entities)
         merge(kg)
-        eqs = kg.find_edge(None, None, '*equal*')
-        eqvars = set()
-        for eq in eqs:
+        # eqs = kg.find_edge(None, None, '*equal*')
+        # eqvars = set()
+        # for eq in eqs:
             # print(eq)
-            left, _, right = eq.split('--')
-            eqvars.add(left)
-            eqvars.add(right)
-        print(kg)
-        print(len(eqvars))
-        kg.show()
+            # left, _, right = eq.split('--')
+            # eqvars.add(left)
+            # eqvars.add(right)
+        # print(kg)
+        # print(len(eqvars))
+        # kg.show()
+
 
 
 if __name__ == '__main__':

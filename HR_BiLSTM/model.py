@@ -3,13 +3,13 @@ import numpy as np
 from data import *
 
 
-LSTM_HIDDEN_SIZE = 100
+LSTM_HIDDEN_SIZE = 200
 MAX_QUESTION_LENGTH = 30
 MAX_RELATION_WORD_LEGNTH = 10
 MAX_RELATION_TYPE_LENGTH = 1
 REL_EMBEDDING_SIZE = 300
 MARGIN = 0.5
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 LEARNING_RATE = 0.5
 
 
@@ -108,9 +108,9 @@ class HRBiLSTM (object):
 
         return similarity, loss, q_inputs, q_length, r_inputs_word, r_inputs_word_len, r_inputs_rels, r_inputs_rels_len
 
-    def train(self, epoch, prev=None):
+    def train(self, epoch, name, prev=None):
         q, q_len, rr, rr_len, rw, rw_len = \
-            prepare_train_data(self.word2idx, self.rel2idx, MAX_QUESTION_LENGTH, MAX_RELATION_TYPE_LENGTH,
+            prepare_training_data(self.word2idx, self.rel2idx, MAX_QUESTION_LENGTH, MAX_RELATION_TYPE_LENGTH,
                                MAX_RELATION_WORD_LEGNTH, BATCH_SIZE)
         print q.shape, q_len.shape, rr.shape, rr_len.shape, rw.shape, rw_len.shape
 
@@ -162,7 +162,7 @@ class HRBiLSTM (object):
             print '.'
             print correct, '/', num_example, float(correct) / num_example
 
-            saver.save(sess, 'HR_BiLSTM/model-%d.ckpt' % (prev_epoch + epoch))
+            saver.save(sess, 'HR_BiLSTM/model_%s-%d.ckpt' % (name, prev_epoch + epoch))
             self.sess = sess
 
     def predict(self, q, r):
@@ -210,6 +210,6 @@ class HRBiLSTM (object):
 
 if __name__ == '__main__':
     model = HRBiLSTM()
-    model.train(6)
+    model.train('b32h200', 6)
 
 
