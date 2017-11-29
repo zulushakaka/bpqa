@@ -215,7 +215,7 @@ def prepare_training_data(word2idx, rel2idx, max_q, max_r_r, max_r_w, batch):
                 negative = []
                 for _ in range(batch - 1):
                     neg = random.choice(cand_rels)
-                    while neg == rel or neg in negative:
+                    while neg == rel or neg in negative and len(negative) < len(cand_rels) - 1:
                         neg = random.choice(cand_rels)
                     negative.append(neg)
 
