@@ -210,6 +210,6 @@ class HRBiLSTM (object):
 
 if __name__ == '__main__':
     model = HRBiLSTM()
-    model.train('b32h200', 6)
+    model.train(6, 'b32h200')
 
 
